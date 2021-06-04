@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="dev.tarkah.cputemp">
+    <key type="s" name="sensor">
+        <summary>Choose a temperature sensor</summary>
+        <description>Sensor to display temperature for</description>
+        <default>""</default>
+    </key>
+  </schema>
+</schemalist>

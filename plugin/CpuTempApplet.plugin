@@ -1,0 +1,8 @@
+[Plugin]
+Module=cputempapplet.so
+Name=CpuTemp
+Description=Cpu Temperature Monitor
+Authors=tarkah <admin@tarkah.dev>
+Copyright=Copyright © 2021 tarkah
+Website=https://github.com/tarkah
+Icon=chip-cpu-symbolic
