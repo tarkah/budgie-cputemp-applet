@@ -4,7 +4,7 @@ public class CpuTempPlugin : Budgie.Plugin, Peas.ExtensionBase {
 	}
 }
 
-[GtkTemplate (ui="/dev/tarkah/cputemp/settings.ui")]
+[GtkTemplate (ui="/com/github/tarkah/budgie-cputemp-applet/settings.ui")]
 public class CpuTempSettings : Gtk.Grid {
 	Settings? settings = null;
 
@@ -58,8 +58,8 @@ public class CpuTempApplet : Budgie.Applet {
 		Object(uuid: uuid);
 		
 		// Setup settings
-		settings_schema = "dev.tarkah.cputemp";
-		settings_prefix = "/dev/tarkah/plugins/instance/cputemp";
+		settings_schema = "com.github.tarkah.budgie-cputemp-applet";
+		settings_prefix = "/com/github/tarkah/budgie-cputemp-applet";
 
 		settings = this.get_applet_settings(uuid);
 		settings.changed.connect(on_settings_change);

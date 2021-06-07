@@ -44,7 +44,7 @@ shared_library(
 )
 
 install_data(
-    'dev.tarkah.cputemp.gschema.xml',
+    'com.github.tarkah.budgie-cputemp-applet.gschema.xml',
     install_dir: join_paths(datadir, 'glib-2.0', 'schemas'),
 )
 
