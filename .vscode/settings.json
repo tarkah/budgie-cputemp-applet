@@ -1,0 +1,4 @@
+{
+    "mesonbuild.configureOnOpen": false,
+    "vls.languageServerPath": "/usr/bin/vala-language-server",
+}
