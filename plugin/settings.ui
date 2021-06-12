@@ -58,7 +58,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkSwitch" id="fscale_switch">
+      <object class="GtkSwitch" id="fahrenheit_switch">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="halign">start</property>

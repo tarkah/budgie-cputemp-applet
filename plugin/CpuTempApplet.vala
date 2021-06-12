@@ -15,7 +15,7 @@ public class CpuTempSettings : Gtk.Grid {
 	private unowned Gtk.Entry? sensor_entry;
 
 	[GtkChild]
-	private unowned Gtk.Switch? fscale_switch;
+	private unowned Gtk.Switch? fahrenheit_switch;
 
 	[GtkChild]
 	private unowned Gtk.Switch? show_sign_switch;
@@ -25,9 +25,9 @@ public class CpuTempSettings : Gtk.Grid {
 
 		populate_combobox();
 
-		settings.bind("sensor",    sensor_entry,     "text",  SettingsBindFlags.DEFAULT);
-		settings.bind("fscale",    fscale_switch,    "state", SettingsBindFlags.DEFAULT);
-		settings.bind("show-sign", show_sign_switch, "state", SettingsBindFlags.DEFAULT);
+		settings.bind("sensor",     sensor_entry,      "text",  SettingsBindFlags.DEFAULT);
+		settings.bind("fahrenheit", fahrenheit_switch, "state", SettingsBindFlags.DEFAULT);
+		settings.bind("show-sign",  show_sign_switch,  "state", SettingsBindFlags.DEFAULT);
 	}
 
 	protected void populate_combobox() {
@@ -151,15 +151,15 @@ public class CpuTempApplet : Budgie.Applet {
 
 	protected string format_temp() {
 		var temp = this.temp;
-		var fscale = settings.get_boolean("fscale");
-		if (fscale) {
+		var fahrenheit = settings.get_boolean("fahrenheit");
+		if (fahrenheit) {
 			temp = temp * 1.8 + 32;
 		}
 
 		var show_sign = settings.get_boolean("show-sign");
 		var sign = "";
 		if (show_sign) {
-			sign = fscale ? "F" : "C";
+			sign = fahrenheit ? "F" : "C";
 		}
 
 		return "%.1f°%s".printf(temp, sign);
