@@ -12,14 +12,18 @@ public class CpuTempSettings : Gtk.Grid {
 	private unowned Gtk.ComboBoxText? combobox;
 
 	[GtkChild]
-	private unowned Gtk.Entry? entry;
+	private unowned Gtk.Entry? sensor_entry;
+
+	[GtkChild]
+	private unowned Gtk.Switch? fscale_switch;
 
 	public CpuTempSettings(Settings? settings) {
 		this.settings = settings;
 
 		populate_combobox();
 
-		settings.bind("sensor", entry, "text", SettingsBindFlags.DEFAULT);
+		settings.bind("sensor", sensor_entry,  "text",  SettingsBindFlags.DEFAULT);
+		settings.bind("fscale", fscale_switch, "state", SettingsBindFlags.DEFAULT);
 	}
 
 	protected void populate_combobox() {
@@ -106,6 +110,8 @@ public class CpuTempApplet : Budgie.Applet {
 				this.sensor = sensor;
 			}
 		}
+
+		update_temp();
 	}
 
 	protected void get_sensors() {
@@ -126,7 +132,7 @@ public class CpuTempApplet : Budgie.Applet {
 		fetch_temp();
 
 		var old_format = temp_label.get_label();
-		var format = "%.1f°".printf (temp);
+		var format = format_temp();
 
 		if (old_format == format) {
 			return true;
@@ -137,6 +143,16 @@ public class CpuTempApplet : Budgie.Applet {
 		queue_draw();
 
 		return true;
+	}
+
+	protected string format_temp() {
+		var temp = this.temp;
+		var fscale = settings.get_boolean("fscale");
+		if (fscale) {
+			temp = temp * 1.8 + 32;
+		}
+
+		return "%.1f°".printf(temp);
 	}
 }
 

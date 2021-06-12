@@ -6,5 +6,10 @@
         <description>Sensor to display temperature for</description>
         <default>""</default>
     </key>
+    <key type="b" name="fscale">
+        <summary>Show temperature in Fahrenheit scale instead of Celsius</summary>
+        <description>If true, tempereture is displayed in Fahrenheit scale. Otherwise, Celsius.</description>
+        <default>false</default>
+    </key>
   </schema>
 </schemalist>
