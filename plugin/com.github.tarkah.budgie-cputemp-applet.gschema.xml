@@ -16,5 +16,10 @@
         <description>If true, C/F sign is displayed. Otherwise, not.</description>
         <default>false</default>
     </key>
+    <key type="b" name="show-fraction">
+        <summary>Show fraction part of temperature.</summary>
+        <description>If true, the fraction part of the temperature is displayed. Otherwise, not.</description>
+        <default>true</default>
+    </key>
   </schema>
 </schemalist>

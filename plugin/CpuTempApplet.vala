@@ -20,14 +20,18 @@ public class CpuTempSettings : Gtk.Grid {
 	[GtkChild]
 	private unowned Gtk.Switch? show_sign_switch;
 
+	[GtkChild]
+	private unowned Gtk.Switch? show_fraction_switch;
+
 	public CpuTempSettings(Settings? settings) {
 		this.settings = settings;
 
 		populate_combobox();
 
-		settings.bind("sensor",     sensor_entry,      "text",  SettingsBindFlags.DEFAULT);
-		settings.bind("fahrenheit", fahrenheit_switch, "state", SettingsBindFlags.DEFAULT);
-		settings.bind("show-sign",  show_sign_switch,  "state", SettingsBindFlags.DEFAULT);
+		settings.bind("sensor",        sensor_entry,         "text",  SettingsBindFlags.DEFAULT);
+		settings.bind("fahrenheit",    fahrenheit_switch,    "state", SettingsBindFlags.DEFAULT);
+		settings.bind("show-sign",     show_sign_switch,     "state", SettingsBindFlags.DEFAULT);
+		settings.bind("show-fraction", show_fraction_switch, "state", SettingsBindFlags.DEFAULT);
 	}
 
 	protected void populate_combobox() {
@@ -162,7 +166,13 @@ public class CpuTempApplet : Budgie.Applet {
 			sign = fahrenheit ? "F" : "C";
 		}
 
-		return "%.1f°%s".printf(temp, sign);
+		var show_fraction = settings.get_boolean("show-fraction");
+		if (show_fraction) {
+			return "%.1f°%s".printf(temp, sign);
+		}
+		else {
+			return "%.0f°%s".printf(temp, sign);
+		}
 	}
 }
 

@@ -105,5 +105,37 @@
         <property name="top-attach">2</property>
       </packing>
     </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="halign">start</property>
+        <property name="valign">center</property>
+        <property name="margin-top">20</property>
+        <property name="margin-end">10</property>
+        <property name="hexpand">True</property>
+        <property name="label" translatable="yes">Show Fraction</property>
+      </object>
+      <packing>
+        <property name="left-attach">0</property>
+        <property name="top-attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSwitch" id="show_fraction_switch">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="halign">start</property>
+        <property name="valign">center</property>
+        <property name="margin-top">20</property>
+        <property name="margin-start">10</property>
+        <property name="active">True</property>
+        <property name="state">True</property>
+      </object>
+      <packing>
+        <property name="left-attach">1</property>
+        <property name="top-attach">3</property>
+      </packing>
+    </child>
   </template>
 </interface>
