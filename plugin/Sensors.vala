@@ -12,7 +12,12 @@ namespace Sensors {
         }
 
         public string display_name() {
-            return this.name + " - " + this.label;
+            if (this.label != "") {
+                return this.name + " - " + this.label;
+            }
+            else {
+                return this.name;
+            }
         }
     }
 
@@ -76,15 +81,17 @@ namespace Sensors {
 
             if (sensor_name != "") {
                 while ((name = dir.read_name ()) != null) {
-                    if (name.substring(0,4)=="temp" && name.substring(-5,5)=="label") {
-                        string label_path = Path.build_filename(directory, name);
-                        string input_path = Path.build_filename(directory, name.replace("label", "input") );
-            
+                    if (name.has_prefix("temp") && name.has_suffix("input")) {
+                        string label_path = Path.build_filename(directory, name.replace("input", "label") );
+                        string input_path = Path.build_filename(directory, name);
+
+                        string label = "";
+                        if (FileUtils.test (label_path, FileTest.IS_REGULAR)) {
+                            label = get_file_contents(label_path);
+                        }
+
                         if (FileUtils.test (input_path, FileTest.IS_REGULAR)) {
-                            string label = get_file_contents(label_path);
-
                             Sensor sensor = new Sensor(sensor_name, label, input_path);
-
                             sensors += sensor;
                         }
                     }
