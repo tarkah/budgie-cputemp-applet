@@ -26,20 +26,20 @@ public class CpuTempSettings : Gtk.Grid {
 	public CpuTempSettings(Settings? settings) {
 		this.settings = settings;
 
-		populate_combobox();
+		populate_combobox(this.combobox);
 
 		settings.bind("sensor",        sensor_entry,         "text",  SettingsBindFlags.DEFAULT);
 		settings.bind("fahrenheit",    fahrenheit_switch,    "state", SettingsBindFlags.DEFAULT);
 		settings.bind("show-sign",     show_sign_switch,     "state", SettingsBindFlags.DEFAULT);
 		settings.bind("show-fraction", show_fraction_switch, "state", SettingsBindFlags.DEFAULT);
 	}
+}
 
-	protected void populate_combobox() {
-		var sensors = Sensors.list_sensors();
+void populate_combobox(Gtk.ComboBoxText combobox) {
+	var sensors = Sensors.list_sensors();
 
-		foreach (var sensor in sensors) {
-			this.combobox.append_text(sensor.display_name());
-		}
+	foreach (var sensor in sensors) {
+		combobox.append_text(sensor.display_name());
 	}
 }
 
@@ -59,6 +59,12 @@ public class CpuTempApplet : Budgie.Applet {
 	private Sensors.Sensor? sensor;
 
 	private Budgie.PanelPosition panel_position = Budgie.PanelPosition.BOTTOM;
+
+	Budgie.Popover? popover = null;
+	private unowned Budgie.PopoverManager? manager = null;
+
+	protected Gtk.ComboBoxText sensor_combobox;
+	protected Gtk.Entry sensor_entry;
 
 	public override bool supports_settings() {
 		return true;
@@ -99,12 +105,49 @@ public class CpuTempApplet : Budgie.Applet {
 
 		layout.pack_start(temp_label, false, false, 0);
 
+		// Create a submenu system
+		popover = new Budgie.Popover(widget);
+		
+		var menu = new Gtk.Grid();
+		menu.column_spacing = 12;
+		menu.border_width = 12;
+
+		var sensor_label = new Gtk.Label("Sensor");
+		menu.attach(sensor_label, 0, 0);
+
+		sensor_combobox = new Gtk.ComboBoxText.with_entry();
+		populate_combobox(sensor_combobox);
+
+		sensor_entry = (Gtk.Entry)sensor_combobox.get_child();
+		sensor_entry.placeholder_text = "Choose...";
+		sensor_entry.can_focus = false;
+
+		settings.bind("sensor", sensor_entry, "text", SettingsBindFlags.DEFAULT);
+
+		menu.attach(sensor_combobox, 1, 0);
+
+		popover.add(menu);
+
+		widget.button_press_event.connect((e) => {
+			if (e.button != 1) {
+				return Gdk.EVENT_PROPAGATE;
+			}
+			if (popover.get_visible()) {
+				popover.hide();
+			} else {
+				this.manager.show_popover(widget);
+			}
+			return Gdk.EVENT_STOP;
+		});
+
 		temp = 0.0;
 		update_temp();
 
 		Timeout.add_seconds_full(Priority.LOW, 1, update_temp);
 
 		add(widget);
+		popover.get_child().show_all();
+
 		show_all();
 	}
 
@@ -207,6 +250,11 @@ public class CpuTempApplet : Budgie.Applet {
 		this.panel_position = position;
 
 		update_temp();
+	}
+
+	public override void update_popovers(Budgie.PopoverManager? manager) {
+		this.manager = manager;
+		manager.register_popover(widget, popover);
 	}
 }
 
