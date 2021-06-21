@@ -6,5 +6,20 @@
         <description>Sensor to display temperature for</description>
         <default>""</default>
     </key>
+    <key type="b" name="fahrenheit">
+        <summary>Show temperature in Fahrenheit scale instead of Celsius</summary>
+        <description>If true, tempereture is displayed in Fahrenheit scale. Otherwise, Celsius.</description>
+        <default>false</default>
+    </key>
+    <key type="b" name="show-sign">
+        <summary>Show C/F after degree sign.</summary>
+        <description>If true, C/F sign is displayed. Otherwise, not.</description>
+        <default>false</default>
+    </key>
+    <key type="b" name="show-fraction">
+        <summary>Show fraction part of temperature.</summary>
+        <description>If true, the fraction part of the temperature is displayed. Otherwise, not.</description>
+        <default>true</default>
+    </key>
   </schema>
 </schemalist>

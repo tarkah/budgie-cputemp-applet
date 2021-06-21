@@ -12,14 +12,26 @@ public class CpuTempSettings : Gtk.Grid {
 	private unowned Gtk.ComboBoxText? combobox;
 
 	[GtkChild]
-	private unowned Gtk.Entry? entry;
+	private unowned Gtk.Entry? sensor_entry;
+
+	[GtkChild]
+	private unowned Gtk.Switch? fahrenheit_switch;
+
+	[GtkChild]
+	private unowned Gtk.Switch? show_sign_switch;
+
+	[GtkChild]
+	private unowned Gtk.Switch? show_fraction_switch;
 
 	public CpuTempSettings(Settings? settings) {
 		this.settings = settings;
 
 		populate_combobox();
 
-		settings.bind("sensor", entry, "text", SettingsBindFlags.DEFAULT);
+		settings.bind("sensor",        sensor_entry,         "text",  SettingsBindFlags.DEFAULT);
+		settings.bind("fahrenheit",    fahrenheit_switch,    "state", SettingsBindFlags.DEFAULT);
+		settings.bind("show-sign",     show_sign_switch,     "state", SettingsBindFlags.DEFAULT);
+		settings.bind("show-fraction", show_fraction_switch, "state", SettingsBindFlags.DEFAULT);
 	}
 
 	protected void populate_combobox() {
@@ -106,6 +118,8 @@ public class CpuTempApplet : Budgie.Applet {
 				this.sensor = sensor;
 			}
 		}
+
+		update_temp();
 	}
 
 	protected void get_sensors() {
@@ -126,7 +140,7 @@ public class CpuTempApplet : Budgie.Applet {
 		fetch_temp();
 
 		var old_format = temp_label.get_label();
-		var format = "%.1f°".printf (temp);
+		var format = format_temp();
 
 		if (old_format == format) {
 			return true;
@@ -137,6 +151,28 @@ public class CpuTempApplet : Budgie.Applet {
 		queue_draw();
 
 		return true;
+	}
+
+	protected string format_temp() {
+		var temp = this.temp;
+		var fahrenheit = settings.get_boolean("fahrenheit");
+		if (fahrenheit) {
+			temp = temp * 1.8 + 32;
+		}
+
+		var show_sign = settings.get_boolean("show-sign");
+		var sign = "";
+		if (show_sign) {
+			sign = fahrenheit ? "F" : "C";
+		}
+
+		var show_fraction = settings.get_boolean("show-fraction");
+		if (show_fraction) {
+			return "%.1f°%s".printf(temp, sign);
+		}
+		else {
+			return "%.0f°%s".printf(temp, sign);
+		}
 	}
 }
 
