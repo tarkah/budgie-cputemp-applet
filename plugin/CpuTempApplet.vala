@@ -58,6 +58,8 @@ public class CpuTempApplet : Budgie.Applet {
 	private Sensors.Sensor[] sensors;
 	private Sensors.Sensor? sensor;
 
+	private Budgie.PanelPosition panel_position = Budgie.PanelPosition.BOTTOM;
+
 	public override bool supports_settings() {
 		return true;
 	}
@@ -167,12 +169,44 @@ public class CpuTempApplet : Budgie.Applet {
 		}
 
 		var show_fraction = settings.get_boolean("show-fraction");
+
+		string format;
 		if (show_fraction) {
-			return "%.1f°%s".printf(temp, sign);
+			format = "%.1f°%s".printf(temp, sign);
 		}
 		else {
-			return "%.0f°%s".printf(temp, sign);
+			format = "%.0f°%s".printf(temp, sign);
 		}
+
+		if ( this.layout.orientation == Gtk.Orientation.VERTICAL ) {
+			format = "<small>" + format + "</small>";
+		}
+
+		return format;
+	}
+
+	public override void panel_position_changed(
+		Budgie.PanelPosition position
+	) {
+		if ( position == Budgie.PanelPosition.LEFT ||
+			 position == Budgie.PanelPosition.RIGHT ) {
+			layout.set_orientation(Gtk.Orientation.VERTICAL);
+			layout.margin_start = 0;
+			layout.margin_end = 0;
+			layout.margin_top = 8;
+			layout.margin_bottom = 8;
+		}
+		else {
+			layout.set_orientation(Gtk.Orientation.HORIZONTAL);
+			layout.margin_start = 8;
+			layout.margin_end = 8;
+			layout.margin_top = 0;
+			layout.margin_bottom = 0;
+		}
+
+		this.panel_position = position;
+
+		update_temp();
 	}
 }
 
