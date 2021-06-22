@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
         <gresource prefix="/com/github/tarkah/budgie-cputemp-applet">
-                <file preprocess="xml-stripblanks">settings.ui</file>
         </gresource>
 </gresources>

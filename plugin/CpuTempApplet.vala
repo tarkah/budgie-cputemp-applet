@@ -4,45 +4,6 @@ public class CpuTempPlugin : Budgie.Plugin, Peas.ExtensionBase {
 	}
 }
 
-[GtkTemplate (ui="/com/github/tarkah/budgie-cputemp-applet/settings.ui")]
-public class CpuTempSettings : Gtk.Grid {
-	Settings? settings = null;
-
-	[GtkChild]
-	private unowned Gtk.ComboBoxText? combobox;
-
-	[GtkChild]
-	private unowned Gtk.Entry? sensor_entry;
-
-	[GtkChild]
-	private unowned Gtk.Switch? fahrenheit_switch;
-
-	[GtkChild]
-	private unowned Gtk.Switch? show_sign_switch;
-
-	[GtkChild]
-	private unowned Gtk.Switch? show_fraction_switch;
-
-	public CpuTempSettings(Settings? settings) {
-		this.settings = settings;
-
-		populate_combobox(this.combobox);
-
-		settings.bind("sensor",        sensor_entry,         "text",  SettingsBindFlags.DEFAULT);
-		settings.bind("fahrenheit",    fahrenheit_switch,    "state", SettingsBindFlags.DEFAULT);
-		settings.bind("show-sign",     show_sign_switch,     "state", SettingsBindFlags.DEFAULT);
-		settings.bind("show-fraction", show_fraction_switch, "state", SettingsBindFlags.DEFAULT);
-	}
-}
-
-void populate_combobox(Gtk.ComboBoxText combobox) {
-	var sensors = Sensors.list_sensors();
-
-	foreach (var sensor in sensors) {
-		combobox.append_text(sensor.display_name());
-	}
-}
-
 public class CpuTempApplet : Budgie.Applet {
 	public string uuid { public set; public get; }
 
@@ -67,11 +28,7 @@ public class CpuTempApplet : Budgie.Applet {
 	protected Gtk.Entry sensor_entry;
 
 	public override bool supports_settings() {
-		return true;
-	}
-
-	public override Gtk.Widget? get_settings_ui() {
-		return new CpuTempSettings(this.get_applet_settings(uuid));
+		return false;
 	}
 
 	public CpuTempApplet(string uuid) {
@@ -105,28 +62,8 @@ public class CpuTempApplet : Budgie.Applet {
 
 		layout.pack_start(temp_label, false, false, 0);
 
-		// Create a submenu system
 		popover = new Budgie.Popover(widget);
-		
-		var menu = new Gtk.Grid();
-		menu.column_spacing = 12;
-		menu.border_width = 12;
-
-		var sensor_label = new Gtk.Label("Sensor");
-		menu.attach(sensor_label, 0, 0);
-
-		sensor_combobox = new Gtk.ComboBoxText.with_entry();
-		populate_combobox(sensor_combobox);
-
-		sensor_entry = (Gtk.Entry)sensor_combobox.get_child();
-		sensor_entry.placeholder_text = "Choose...";
-		sensor_entry.can_focus = false;
-
-		settings.bind("sensor", sensor_entry, "text", SettingsBindFlags.DEFAULT);
-
-		menu.attach(sensor_combobox, 1, 0);
-
-		popover.add(menu);
+		popover.add(create_menu());
 
 		widget.button_press_event.connect((e) => {
 			if (e.button != 1) {
@@ -165,6 +102,93 @@ public class CpuTempApplet : Budgie.Applet {
 		}
 
 		update_temp();
+	}
+
+	protected Gtk.Grid create_menu() {
+		// Create a submenu system
+		var menu = new Gtk.Grid();
+		menu.row_spacing = 6;
+		menu.border_width = 12;
+
+		// Sensors
+		var sensor_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+		sensor_box.spacing = 12;
+
+		var sensor_label = new Gtk.Label(_ ("Sensor"));
+		sensor_label.halign = Gtk.Align.START;
+		sensor_label.valign = Gtk.Align.CENTER;
+		sensor_box.pack_start(sensor_label);
+
+		sensor_combobox = new Gtk.ComboBoxText.with_entry();
+		sensor_combobox.halign = Gtk.Align.END;
+		sensor_combobox.valign = Gtk.Align.CENTER;
+		foreach (var sensor in this.sensors) {
+			sensor_combobox.append_text(sensor.display_name());
+		}
+
+		sensor_entry = (Gtk.Entry)sensor_combobox.get_child();
+		sensor_entry.placeholder_text = _ ("Choose...");
+		sensor_entry.can_focus = false;
+		sensor_box.pack_start(sensor_combobox);
+		menu.attach(sensor_box, 0, 0);
+
+		settings.bind("sensor", sensor_entry, "text", SettingsBindFlags.DEFAULT);
+
+		// Fahrenheit Scale
+		var scale_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+		sensor_box.spacing = 12;
+
+		var scale_label = new Gtk.Label(_ ("Fahrenheit Scale"));
+		scale_label.halign = Gtk.Align.START;
+		scale_label.valign = Gtk.Align.CENTER;
+		scale_box.pack_start(scale_label);
+
+		var scale_switch = new Gtk.Switch();
+		scale_switch.can_focus = false;
+		scale_switch.halign = Gtk.Align.END;
+		scale_switch.valign = Gtk.Align.CENTER;
+		scale_box.pack_start(scale_switch);
+		menu.attach(scale_box, 0, 1);
+
+		settings.bind("fahrenheit", scale_switch, "active", SettingsBindFlags.DEFAULT);
+
+		// Show C/F Sign
+		var sign_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+		sign_box.spacing = 12;
+
+		var sign_label = new Gtk.Label(_ ("Show C/F Sign"));
+		sign_label.halign = Gtk.Align.START;
+		sign_label.valign = Gtk.Align.CENTER;
+		sign_box.pack_start(sign_label);
+
+		var sign_switch = new Gtk.Switch();
+		sign_switch.can_focus = false;
+		sign_switch.halign = Gtk.Align.END;
+		sign_switch.valign = Gtk.Align.CENTER;
+		sign_box.pack_start(sign_switch);
+		menu.attach(sign_box, 0, 2);
+
+		settings.bind("show-sign", sign_switch, "active", SettingsBindFlags.DEFAULT);
+
+		// Show Fraction
+		var fraction_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 4);
+		fraction_box.spacing = 12;
+
+		var fraction_label = new Gtk.Label(_ ("Show Fraction"));
+		fraction_label.halign = Gtk.Align.START;
+		fraction_label.valign = Gtk.Align.CENTER;
+		fraction_box.pack_start(fraction_label);
+
+		var fraction_switch = new Gtk.Switch();
+		fraction_switch.can_focus = false;
+		fraction_switch.halign = Gtk.Align.END;
+		fraction_switch.valign = Gtk.Align.CENTER;
+		fraction_box.pack_start(fraction_switch);
+		menu.attach(fraction_box, 0, 3);
+
+		settings.bind("show-fraction", fraction_switch, "active", SettingsBindFlags.DEFAULT);
+
+		return menu;
 	}
 
 	protected void get_sensors() {
