@@ -24,13 +24,6 @@ public class CpuTempApplet : Budgie.Applet {
 	Budgie.Popover? popover = null;
 	private unowned Budgie.PopoverManager? manager = null;
 
-	protected Gtk.ComboBoxText sensor_combobox;
-	protected Gtk.Entry sensor_entry;
-
-	public override bool supports_settings() {
-		return false;
-	}
-
 	public CpuTempApplet(string uuid) {
 		Object(uuid: uuid);
 		
@@ -119,14 +112,14 @@ public class CpuTempApplet : Budgie.Applet {
 		sensor_label.valign = Gtk.Align.CENTER;
 		sensor_box.pack_start(sensor_label);
 
-		sensor_combobox = new Gtk.ComboBoxText.with_entry();
+		var sensor_combobox = new Gtk.ComboBoxText.with_entry();
 		sensor_combobox.halign = Gtk.Align.END;
 		sensor_combobox.valign = Gtk.Align.CENTER;
 		foreach (var sensor in this.sensors) {
 			sensor_combobox.append_text(sensor.display_name());
 		}
 
-		sensor_entry = (Gtk.Entry)sensor_combobox.get_child();
+		var sensor_entry = (Gtk.Entry)sensor_combobox.get_child();
 		sensor_entry.placeholder_text = _ ("Choose...");
 		sensor_entry.can_focus = false;
 		sensor_box.pack_start(sensor_combobox);
