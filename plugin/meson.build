@@ -5,21 +5,9 @@ install_data(
     install_dir : LIB_INSTALL_DIR
 )
 
-gresource = join_paths(meson.current_source_dir(), 'plugin.gresource.xml')
-
-gnome = import('gnome')
-
-cputemp_applet_resources = gnome.compile_resources(
-    'cputemp-applet-resources',
-    gresource,
-    source_dir: meson.current_source_dir(),
-    c_name: 'budgie_cputemp',
-)
-
 applet_cputemp_sources = [
     'Sensors.vala',
-    'CpuTempApplet.vala',
-    cputemp_applet_resources
+    'CpuTempApplet.vala'
 ]
 
 applet_cputemp_deps = [
@@ -34,10 +22,7 @@ shared_library(
     dependencies: applet_cputemp_deps,
     vala_args: [
         '--pkg', 'libpeas-1.0',
-        '--pkg', 'gtk+-3.0',
-        # Make gresource work
-        '--target-glib=2.38',
-        '--gresources=' + gresource,        
+        '--pkg', 'gtk+-3.0',       
     ],
     install: true,
     install_dir: LIB_INSTALL_DIR,
