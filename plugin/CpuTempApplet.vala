@@ -115,13 +115,24 @@ public class CpuTempApplet : Budgie.Applet {
 		var sensor_combobox = new Gtk.ComboBoxText.with_entry();
 		sensor_combobox.halign = Gtk.Align.END;
 		sensor_combobox.valign = Gtk.Align.CENTER;
+
+		int max_width = 0;
 		foreach (var sensor in this.sensors) {
-			sensor_combobox.append_text(sensor.display_name());
+			var name = sensor.display_name();
+
+			max_width = int.max(max_width, name.length);
+
+			sensor_combobox.append_text(name);
 		}
 
 		var sensor_entry = (Gtk.Entry)sensor_combobox.get_child();
 		sensor_entry.placeholder_text = _ ("Choose...");
 		sensor_entry.can_focus = false;
+
+		if (max_width > 0) {
+			sensor_entry.width_chars = max_width;
+		}
+
 		sensor_box.pack_start(sensor_combobox);
 		menu.attach(sensor_box, 0, 0);
 
