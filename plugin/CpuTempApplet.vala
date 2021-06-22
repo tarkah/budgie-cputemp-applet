@@ -82,6 +82,8 @@ public class CpuTempApplet : Budgie.Applet {
 	}
 
 	void on_settings_change(string key) {
+		update_temp();
+		
 		if (key != "sensor") {
 			return;
 		}
@@ -93,8 +95,6 @@ public class CpuTempApplet : Budgie.Applet {
 				this.sensor = sensor;
 			}
 		}
-
-		update_temp();
 	}
 
 	protected Gtk.Grid create_menu() {
