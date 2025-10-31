@@ -12,18 +12,14 @@ applet_cputemp_sources = [
 
 applet_cputemp_deps = [
     dependency('gtk+-3.0', version: '>= 3.24.0'),
-    dependency('libpeas-1.0', version: '>= 1.26.0'),
-    dependency('budgie-1.0', version: '>=2')
+    dependency('libpeas-2', version: '>= 1.99.0'),
+    dependency('budgie-2.0', version: '>= 3')
 ]
 
 shared_library(
     'cputempapplet',
     applet_cputemp_sources,
     dependencies: applet_cputemp_deps,
-    vala_args: [
-        '--pkg', 'libpeas-1.0',
-        '--pkg', 'gtk+-3.0',       
-    ],
     install: true,
     install_dir: LIB_INSTALL_DIR,
 )
