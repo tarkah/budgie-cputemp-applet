@@ -49,4 +49,5 @@ config_h = configure_file(
 	configuration: conf
 )
 
+subdir('assets')
 subdir('plugin')
